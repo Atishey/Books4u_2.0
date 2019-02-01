@@ -52,7 +52,8 @@
             </style>
          </head>
 
-<body style="padding: 20px;" onload="disable_file_onload(); cart_total_count(); validate_login(); indi_deal();">
+<body style="padding: 20px">
+            <center>{{msg}}</center>
             <div class="row container-fluid" style="margin: 10px 50px;">
                 <div class="col-sm-18">
                     <a href="home"><img src="images/logo.jpg" style="max-height: 100px;"></a>
@@ -91,7 +92,7 @@
                             </div>
                             <!-- end of #heading-container-->
 
-                            <form action="/pad" method="POST">
+                            <form action="/pad" method="POST" name="myForm" onsubmit = "return validateForm()">
                                 <div class="step">
 
                                     <h2 class='steps'>Step 1</h2>
@@ -110,22 +111,7 @@
                                     </div>
                                     <!-- end of .one-line-container-->
 
-                                    <div id="ad-title-container">
-
-                                        <div class="title-class">
-                                            <h3 id="ad-title-h3">Ad Title</h3>
-                                        </div>
-                                        <!-- end of .title-class-->
-                                        <div class="fill-area">
-                                            <input type='text' name='postTitle1' maxlength='70' id='postTitle1'  style="color: #353535; padding: 0% 2%; font-size:14px; height:35px; margin-top:2px; border:1px solid #BDBDBD; border-radius:3px;" placeholder = "Suitable title for the book" />
-                                            <div class="error-msg" id="ad-title-err">Please enter the details of the book and suitable title for it</div>
-                                            <div id='titleCounter' style='float:right;margin-right:15px;color:darkgrey;'>
-                                            </div>
-                                            <!--end of titleCounter-->
-
-                                        </div>
-                                        <!-- end of .fill-area-->
-
+                                    
                                     </div>
                                     <!-- end of #ad-title-container-->
 
@@ -136,7 +122,7 @@
                                         </div>
                                         <!-- end of .title-class-->
                                         <div class="fill-area">
-                                            <input name = "name" type = "text">
+                                            <input name = "bname" type = "text">
                                             <!-- <div class="error-msg" id="ad-cat-err">Please select Category</div> -->
                                         </div>
                                         <!-- end of .fill-area-->
@@ -189,27 +175,7 @@
                                         </div>
                                         <!-- end of .title-class-->
                                         <div class="fill-area">
-                                            <select name="sem" style='' onchange="validate_sem();">
-                                                <option disabled selected value='0'>Select Semester</option>
-                                                <option value='all'>All</option>
-                                                                                                    <option value="1" name="sem">
-                                                        Semester 1                                                    </option>
-                                                                                                        <option value="2" name="sem">
-                                                        Semester 2                                                    </option>
-                                                                                                        <option value="3" name="sem">
-                                                        Semester 3                                                    </option>
-                                                                                                        <option value="4" name="sem">
-                                                        Semester 4                                                    </option>
-                                                                                                        <option value="5" name="sem">
-                                                        Semester 5                                                    </option>
-                                                                                                        <option value="6" name="sem">
-                                                        Semester 6                                                    </option>
-                                                                                                        <option value="7" name="sem">
-                                                        Semester 7                                                    </option>
-                                                                                                        <option value="8" name="sem">
-                                                        Semester 8                                                    </option>
-                                                         
-                                            </select>
+                                            <input type = number min="1" max="8" name="sem">
                                           
 
                                     </div>
@@ -223,66 +189,19 @@
                                         </div>
                                         
                                         <div class="fill-area">
-                                            <input type="text" class="form-control" id="postSubject" name="mrp" maxlength="100" style="" onchange="validate_sub();">
-                                            <div class="error-msg" id="ad-sub-err">Please enter Subject</div>
-                                            <div id="subject-hint-c">
-                                                <!-- <div class="error-msg-hint" id="ad-sub-hint-img"><img src="http://www.clankart.com/comp_images/left-arrow1.png" alt=""></div> -->
-                                                <!-- <div class="error-msg-hint" id="ad-sub-hint"> -->
-                                                    <center><span class="subject-hint">Please <b>AVOID</b> using <b>ABBREVATIONS</b> and write <b>FULL</b> Subject Name.</span></center>
-                                                </div>
-                                            </div>
+                                            <input type="text" class="form-control" id="postSubject" name="mrp" maxlength="100" style="" >
+                                             <div id="subject-hint-c">
+                                                 <div class="error-msg-hint" id="ad-sub-hint-img"><img src="http://www.clankart.com/comp_images/left-arrow1.png" alt=""></div> -->
+                                               
                                         </div>
                                        
 
                                     </div>
-                                    <!-- end of .one-line-container-->
+                                   </div> -->
+                                            
 
-                                  <!--   <div class="one-line-container" id="exam-line-container">
-
-                                        <div class="title-class">
-                                            <h3 id="category-h3">Exam Type</h3>
-                                        </div>
-                                       
-                                        <div class="fill-area">
-                                            <select id='examType' name='examType' style='' onchange="validate_exam();">
-                                                <option disabled selected value='0'>Select Exam Type</option>
-                                                <option value='regular'>Regular</option>
-                                                <div class="error-msg">Please enter a title</div>
-                                                <option value='reappear'>Reappear</option>
-                                            </select>
-                                            <div class="error-msg" id="ad-exam-err">Please select Exam Type</div>
-
-                                        </div> -->
-                                        <!-- end of .fill-area-->
-
-                                    <!-- </div> -->
-                                    <!-- end of .one-line-container-->
-
-                                        <div class="one-line-container" id="price-line-container">
-
-                                            <div class="title-class">
-                                                <h3 id="category-h3">Your Price (&#8377;)</h3>
-                                            </div>
-                                            <!-- end of .title-class-->
-                                            <div class="fill-area">
-                                                <input type='number' name='price' id='price' maxlength='5'" onchange="validate_price1();" />
-                                                <div id="free-container-m">
-                                                    <span class="span-or">or</span>
-                                                    <input type="checkbox" name="priceFree" value="0" id="free" "><span class="span-free">Free</span>
-                                                </div>
-                                                <!-- <div class="error-msg" id="ad-price-err">Please enter Your Price</div> -->
-                                            </div>
-
-                                    <div class="one-line-container" id="optional-line-container" onclick="toggle_optional_details();">
-
-                                        <div class="title-class title-class-not-for-m">
-
-                                        </div>
-                                        <!-- end of .title-class-->
-                                        <div class="fill-area">
-                                            <h3 class="optional-plus-minus" id="category-h3" style="">Optional Details +</h3>
-                                        </div>
-                                        <!-- end of .fill-area-->
+                                    
+                                        
 
                                     </div>
                                     <!-- end of .one-line-container-->
@@ -366,14 +285,6 @@
                                 </div>
                                 
 
-                                            <div class="error-msg" id="max-size-err" style="width:60%;">Please upload image of size less than 10 MB</div>
-                                            <div class="error-msg" id="img-type-err">Please upload only jpeg or png file</div>
-                                            <div class="error-msg" id="img-none-err">Please upload a photograph</div>
-                                            <div class="error-msg no-image" id="img-none-err-1">Please upload Image 1</div>
-                                            <div class="error-msg no-image" id="img-none-err-2">Please upload Image 2</div>
-                                            <div class="error-msg no-image" id="img-none-err-3">Please upload Image 3</div>
-                                            <div class="error-msg no-image" id="img-none-err-4">Please upload Image 4</div>
-                                        </div>
                                         <!-- end of .fill-area-->
 
                                     </div>
@@ -388,18 +299,6 @@
 
                                     <div class="one-line-container" id="own-type-line-container">
 
-                                        <div class="title-class">
-                                            <h3 id="category-h3">You Are</h3>
-                                        </div>
-                                        <!-- end of .title-class-->
-                                        <div class="fill-area" onclick="indi_deal(); validate_own_type();">
-                                            <div id="type-radio">
-                                                <span class="one-radio"><input type="radio" class="not-radio" name="indi_deal" id="indi_deal" value="dealer"  ><span class="radio-label">Dealer</span></span>
-                                                <input type="radio" name="indi_deal" id="indi_deal1" value="individual"  ><span class="radio-label">Individual</span>
-                                            </div>
-                                            <div class="error-msg" id="ad-own-type-err">Please select this field</div>
-                                        </div>
-                                        <!-- end of .fill-area-->
 
                                     </div>
                                     <!-- end of .one-line-container-->
@@ -442,34 +341,14 @@
                                         <!-- end of .title-class-->
                                         <div class="fill-area" style="position: relative;">
                                             <div id="isd"></div>
-                                            <input type='number' name="pno" />
-                                            <!-- <div class="error-msg" id="ad-own-phone-err">Please enter your Phone number</div> -->
-                                            <!-- <div class="error-msg" id="ad-own-phone-no-err">Please enter valid Phone number</div> -->
+                                            <input type='text' name="pno" />
+                                            
                                         </div>
-                                        <!-- end of .fill-area-->
-                                        <!-- <div id="phone-hint">
-                                            <p>Items with Phone Number sell faster!</p>
-                                        </div>
- -->
-                                    </div>
-                                    <!-- end of .one-line-container-->
-
-                                    <div class="one-line-container" id="own-city-line-container">
-
-                                        <div class="title-class">
-                                            <h3 id="category-h3">Address</h3>
-                                        </div>
-                                        <!-- end of .title-class-->
-                                        <div class="fill-area">
-                                            <input type='text'   name="address" placeholder="enter your address" />
-                                            <!-- <div class="error-msg" id="ad-own-city-err">Please enter your address</div>
-                                        </div> -->
-                                        <!-- end of .fill-area-->
-
+                                        
                                     </div>
                                     
 
-                                </div>
+                                    
                                 <!-- end of .step-->
 
                                 <div id="agree-container">
@@ -506,37 +385,25 @@
 
     
     
-            <script>
+            <script>               
 
-                function toggle_optional_details() {
-                    $(".optional-details-four").slideToggle(500);
-                    if ($('.optional-plus-minus').text() == "Optional Details +") {
-                        $(".optional-plus-minus").text('Optional Details -');
-                        $("#optional-line-container").css('border-bottom', '0px');
-                    } else {
-                        $(".optional-plus-minus").text('Optional Details +');
-                        $("#optional-line-container").css('border', '1px solid #DEDEDE');
-                    }
-                }
+                // function validateForm() {
+                //     var bname = document.forms["myForm"]["bname"].value;
+                //     var mrp = document.forms["myForm"]["mrp"].value;
+                //     var author = document.forms["myForm"]["author"].value;
+                //     var branch = document.forms["myForm"]["branch"].value;
+                //     var sem = document.forms["myForm"]["sem"].value;
+                    
+                //     console.log(bname+" "+author+" "+branch+" "+sem+" "+mrp+" ");
 
-                $(document).ready(function() {
-                    var e = 70;
-                    $("#titleCounter").html(e + " characters remaining"), $("#postTitle1").keyup(function() {
-                        var o = $("#postTitle1").val().length,
-                            t = e - o;
-                        $("#titleCounter").html(t + " characters remaining")
-                    });
-                    var o = 500;
-                    $("#titleCounterDesc").html(o + " characters remaining"), $("#postDescription").keyup(function() {
-                        var e = $("#postDescription").val().length,
-                            t = o - e;
-                        $("#titleCounterDesc").html(t + " characters remaining")
-                    }), $("#postSubject").focusin(function() {
-                        $("#subject-hint-c").show(), $("#subject-hint-m").show()
-                    }), $("#postSubject").focusout(function() {
-                        $("#subject-hint-c").hide(), $("#subject-hint-m").hide()
-                    })
-                });
+                //     // if (bname == "" || author == "" || branch == ""||sem == ""||mrp == "") {
+                //         if(mrp  == "")
+                //             alert("must be filled out");
+                            
+                //         return false;
+                //     }
+                //}      
+        
 
 
 </script>

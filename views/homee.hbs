@@ -1,0 +1,34 @@
+<html>     <head>     <link rel="shortcut icon" href="favicon.ico"
+type="image/x-icon">     <meta charset = "utf-8">     <meta name="viewport"
+content="width=device-width, initial-scale=1">     <link rel="stylesheet"
+href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="stylesheets/home.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js
+"></script>     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js
+/bootstrap.min.js"></script>         <!-- <title >             Books4u
+</title> -->
+	
+	</head>
+<body style="padding: 20px;">
+			<div class="row container-fluid" style="margin: 10px 50px;">
+				<div class="col-sm-2">
+					<a href="home.html"><img src="images/logo.jpg" style="max-height: 100px;"></a>
+				</div>
+{{#each mybooks}}
+	<div class="center-body" >
+		 <div class="card">
+  			<img src="img_avatar.png" alt="Book Details" style="width:100%">
+  			<div class="container" href="">
+    			<!-- 	<h4><b>English</b></h4> -->
+    			<p>Name: {{name}} </p>  
+			  	<p>Author: {{author}} </p>  
+			  	<p>Branch: {{branch}} </p>  
+			  	<p>MRP: {{MRP}} </p>
+			  	<p>Semester: {{Semester}} </p>
+    			<!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-shopping-cart"> </span>Buy</button> -->
+  			</div>
+		</div> 
+	</div>
+	{{/each}}
+</body>
+</html>

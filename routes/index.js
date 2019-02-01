@@ -2,33 +2,25 @@
 
 var express = require('express');
 var router = express.Router();
-var mysql = require("mysql");
+var ObjectID = require('mongodb').ObjectID; 
+var MongoClient = require('./db.js');
+const bodyParser = require('body-parser')
+const bcrypt = require('bcrypt');
 
-var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database:"bks4u"
-});
-
-var uid = 0,customer_id=0,book_id = 0;
+ 
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('welcome',{title:'Welcome:)'});
 });
 
-router.get('/login1',function(req,res,next){
-  res.render('login1',{title:'Please login your details'});
+router.get('/login',function(req,res,next){
+  res.render('login',{title:'Please login your details'});
 });
 
 router.get('/signup', function(req, res, next) {
   res.render('signup', { title: 'Books4u' });
 });
-
-// router.get('/buy',function(req,res,next){
-//   res.render('buy',{title: 'Buy'})
-// })
 
 router.get('/pad',function(req,res,next){
   res.render('pad',{title:'Post Ad!!!'});
@@ -38,237 +30,247 @@ router.get('/logout',function(req,res,next){
   res.render('logout',{title:'Please login your details'});
 });
 
-//Signup Form
+router.get('/home', function(req, res, next) {  
+  res.render('home', { title: 'Books4u' });
+});
+
+router.get('/home/:id',function(req,res,next){
+  MongoClient.connectToServer(function(err){    
+    var db = MongoClient.getDb();
+    var url = ObjectID(req.params.id);
+    // var u = url;
+    db.collection("users").findOne({_id:url},function(err,user){
+      console.log(user)      
+      res.render('home',{users:user,books:user.books,url:url});        
+    });     
+      
+  });
+});
+
+
+
 router.post('/signup', function(req, res, next){
-  
-    con.query({
-      sql : "insert into user_info(uName,uPassword,u_id,uPh_no,uEmail_id,uSem) values(?,?,?,?,?,?)",
-      values : [req.body.username, req.body.password, uid, req.body.phone, req.body.email, req.body.semester]
-    },
-    function(err,result, fields){
-      if(err) throw err;
-      else
-      {
-        con.query({
-        sql : "Select max(u_id) as mid from user_info",
-        //values : [req.body.phone]
-        },
-        function(err,result1, fields){
-          console.log('hello');
-          console.log(result1[0].mid);
-            con.query({
-              //sql: "call curDate (?) ;",
-              // values:[result1[0].mid]
-              sql: "Select * from user_info"
-              },
-             function(err,result2, fields){
-                //console.log(result2[0]);
-                   con.query({
-                  sql : "Select * from books join seller_info on books.Book_id = seller_info.Book_id"
-                 
-                  },
-
-                  function(err,result3,fields)
-                  {
-                    console.log(req.body.username);
-                    console.log(result3[0]);
-                    console.log(result3[1]);
-                    console.log(result3[2]);
-                    res.render('home',{username:req.body.username,Subject:result3[0].Name,Price:result3[0].MRP,Author:result3[0].Author,
-                                    Subject1:result3[1].Name,Price1:result3[1].MRP,Author1:result3[1].Author,
-                                    Subject2:result3[2].Name,Price2:result3[2].MRP,Author2:result3[2].Author,
-                                    Name:result3[0].sName,Pno:result3[0].sPh_no,Address:result3[0].sAddress,Email:result3[0].sEmail,
-                                  Name1:result3[1].sName,Pno1:result3[1].sPh_no,Address1:result3[1].sAddress,Email1:result3[1].sEmail,
-                                  Name2:result3[2].sName,Pno2:result3[2].sPh_no,Address2:result3[2].sAddress,Email2:result3[2].sEmail
-                              });
-
-                });
-           });
-      });
-    }
-});
-    
-    // res.render('home',{username:req.body.username});
-});
- module.exports = router;
-
-router.get('/home',function(req,res,next){ 
-con.query({
-       sql : "Select * from books join seller_info on books.Book_id = seller_info.Book_id"
-       // values:[s.Book_id]
-  },
-
-    function(err,result1,fields)
-    {
-      // res.render('home');
-      console.log(result1[0]);
-      console.log(result1[1]);
-      console.log(result1[2]);
-      res.render('home',{Subject:result1[0].Name,Price:result1[0].MRP,Author:result1[0].Author,
-                      Subject1:result1[1].Name,Price1:result1[1].MRP,Author1:result1[1].Author,
-                      Subject2:result1[2].Name,Price2:result1[2].MRP,Author2:result1[2].Author,
-                      Name:result1[0].sName,Pno:result1[0].sPh_no,Address:result1[0].sAddress,Email:result1[0].sEmail,
-                    Name1:result1[1].sName,Pno1:result1[1].sPh_no,Address1:result1[1].sAddress,Email1:result1[1].sEmail,
-                    Name2:result1[2].sName,Pno2:result1[2].sPh_no,Address2:result1[2].sAddress,Email2:result1[2].sEmail
-                  });
-
-    });
-     //res.render('login1',{title:'Welcome',login_status:'Login Again!!'});//
-});
-
-
-
-
-
-//Login form
-router.post('/login1', function(req, res, next){
-    console.log(req.body);
-    con.query({
-      sql : "Select * from user_info where uEmail_id = ?",
-      values : [req.body.Email]
-    },
-    function(err,result, fields){
-      if(err) throw err;
-      else 
-      {
-          console.log(result);
-          if(result.length >0){
-            console.log(result[0].uName);
-             if(result[0].uPassword == req.body.password){
-                // res.render('home',{username:result[0].uName,});
-                 con.query({
-       sql : "Select * from books join seller_info on books.Book_id = seller_info.Book_id"
-       // values:[s.Book_id]
-  },
-
-    function(err,result1,fields)
-    {
-      // res.render('home');
-      console.log(result[0].uName);
-      console.log(result1[1]);
-      console.log(result1[2]);
-      res.render('home',{username:result[0].uName,Subject:result1[0].Name,Price:result1[0].MRP,Author:result1[0].Author,
-                      Subject1:result1[1].Name,Price1:result1[1].MRP,Author1:result1[1].Author,
-                      Subject2:result1[2].Name,Price2:result1[2].MRP,Author2:result1[2].Author,
-                      Name:result1[0].sName,Pno:result1[0].sPh_no,Address:result1[0].sAddress,Email:result1[0].sEmail,
-                    Name1:result1[1].sName,Pno1:result1[1].sPh_no,Address1:result1[1].sAddress,Email1:result1[1].sEmail,
-                    Name2:result1[2].sName,Pno2:result1[2].sPh_no,Address2:result1[2].sAddress,Email2:result1[2].sEmail
-                  });
-
-    });
-             }
-              else{
-                  console.log("WRONG PASSWORD");
-                 res.render('login1',{title:'Welcome',login_status:'Login Form'});
-                  }
+  var obj = JSON.stringify(req.body);  
+  var jsonObj =JSON.parse(obj);
+  MongoClient.connectToServer(function(err){
+    if(err)
+      console.log(err);
+    var db = MongoClient.getDb();
+    db.collection("users").findOne({name:req.body.username},function(err,user){
+      // console.log(req.body.username);
+      if(user === null){      
+        
+        var pass = req.body.password;
+        bcrypt.hash(pass,10,function(err,hash){
+          var obj = {
+            "name":req.body.username,            
+            "password":hash,
+            "ph_no":req.body.phone,
+            "email":req.body.email,
+            "Semester":req.body.semester,
+            "buyer":false,
+            "seller":false,
+            "books":[]
           }
-              else{
-                console.log("result empty");
-                res.render('login1',{title:'Welcome',login_status:'Login Form'});
-              }
+          // jsonObj = JSON.parse(obj);
+          db.collection("users").insertOne(obj,function(err,res1){
+            if(err) throw err;
+            console.log("User created");
+            res.redirect('/login');
+            // db.close();
+          });
+        });
+        
       }
-      });
+      else {
+        console.log("Username exists!!!")
+        res.send({"Error":"Username exists"});
+      }
+
+    });
+    
+  });   
+    
+});
+
+router.get('/all',function(req,res,next){
+  MongoClient.connectToServer(function(err){
+    if(err)
+      console.log(err);
+    var db = MongoClient.getDb();
+    console.log(req.query.id);
+    var id = ObjectID(req.query.id);
+    // var hex = /[0-9A-Fa-f]{6}/g;
+    // id = (hex.test(id))? ObjectID(id) : id; 
+    db.collection("users").findOne({_id:id},function(err,uid){
+      var sem = uid.Semester;
+      // console.log(uid);
+      db.collection("users").find({_id:{'$ne':uid._id}}).toArray(function(err,user){
+        console.log(user)
+        if(user == null)
+          res.send({msg:"not..ok"})
+        else {
+          var arr = []
+          var obj = user;
+          var book = [];
+          for (var i = user.length - 1; i >= 0; i--) {
+            // console.log(user[i].books);
+            for (var j = user[i].books.length - 1; j >= 0; j--) {
+              var obj = {
+                uname:user[i].name,
+                uph:user[i].ph_no,
+                uemail:user[i].email,
+                bname:user[i].books[j].name,
+                bmrp:user[i].books[j].MRP,
+                author:user[i].books[j].author
+              }
+            }
+            arr.push(obj);          
+          }
+          // console.log(arr);
+          res.render('all',{data:arr,url:ObjectID(req.params.id)});
+        }
+        
+    
+    });
+  });
+  
+    });
+
+
+});
+
+
+// //Login form
+router.post('/login', function(req, res, next){
+   MongoClient.connectToServer(function(err){
+    if(err)
+      console.log(err);
+    var db = MongoClient.getDb();
+    // console.log(req.body);
+    db.collection("users").findOne({email:req.body.email},function(err,user){
+      // console.log(user);
+      if(user == null)
+        res.render('login',{login_status:"enter valid credentials"})
+      else {
+        bcrypt.compare(req.body.password,user.password,function(err,match){
+          if(match){    
+            
+            var users = {
+              name:user.name,
+              ph_no:user.ph_no,
+              email:user.email,
+              sem:user.Semester
+            }
+            // console.log(users) ;
+            var url = user._id;        
+            res.render('home',{users:users,books:user.books,url:url});              
+          }
+          else{
+            res.redirect('/login',{login_status:"idk"});
+          }        
+        })        
+      }       
+        
+      
+      // db.close();
+    });
+  });
 });
    
- //Post ad Form     
-  
+//  //Post ad Form     
+ router.post('/pad', function(req, res, next){
 
+  MongoClient.connectToServer(function(err){
+    if(err)
+      console.log(err);
+    var db = MongoClient.getDb();      
+    
+    db.collection("users").findOne({email:req.body.email},function(err,user){
+      var obj = {
+        "name":req.body.bname,            
+        "author":req.body.author,
+        "branch":req.body.branch,
+        "MRP":req.body.mrp,
+        "Semester":req.body.sem            
+      }
+      var Book_id = null;
+      var books = user.books;
+      if(user === null)
+        res.redirect('/pad');
+      else {
+          
+          // console.log(book_ids);
+          db.collection("books").insertOne(obj,function(err,res1){
+          if(err) throw err;
+            console.log("Book inserted");
+            // console.log(res1);            
+            books.push(obj);
+            // console.log(book_ids);
+            if(req.body.want == "sell"){
+            // console.log(book_ids)
+              var newvalues = {$set:{seller:true,books:books}}
+              db.collection("users").updateOne({'_id':ObjectID(user._id)}, newvalues, function(err, res) {
+              if (err) throw err;
+              console.log("Book update");  
+                }); 
+            }
+            else if(req.body.want === "buy"){
 
-router.post('/pad', function(req, res, next){
-console.log(req.body.sem);
-  con.query({
-    sql: "insert into books(Name,Author,Branch,Semester,MRP,your_Price,Book_id) values(?,?,?,?,?,?,?)",
-    values:[req.body.name,req.body.author,req.body.branch,req.body.sem,req.body.mrp,req.body.price,book_id]
-  },
-  function(err,result,fields)
-  {
-    console.log("done!!");
+              var newvalues = {$set:{buyer:true,books:books}}
+              db.collection("users").updateOne({'_id':ObjectID(user._id)}, newvalues, function(err, res) {
+              if (err) throw err;
+              console.log("1 document updated buy");
+              });
+            }      
+          });         
+          var url = user._id;
+          res.render('/login/'+url,{user:user,books:user.books,url:url});              
+
+      }      
+    });
+    
+  });   
+    
   });
 
-  if(req.body.want == 'buy')
-  {    
-    con.query({
-      sql : "insert into buyer_info(bName,bPh_no,b_id,buyer_id,bEmail,bAddress) values(?,?,?,?,?,?)",
-      values : [req.body.username, req.body.pno, uid, customer_id, req.body.email, req.body.address]
-    },
-    function(err1,result1, fields1){
-      if(err1){
-        console.log(err1);
-      }
-
-      else
-       console.log("Value inserted");
-    });
-  }
-
-  else if(req.body.want == 'sell')
-  {
-      con.query({
-      sql : "insert into seller_info(sName,sPh_no,s_id,seller_id,sEmail,sAddress) values(?,?,?,?,?,?)",
-      values : [req.body.username, req.body.pno, uid, customer_id, req.body.email, req.body.address]
-    },
-    function(err1,result1, fields1){
-      if(err1){
-        console.log(err1);
-      }
-      else 
-        console.log("Value inserted");
-    });
-  }
-    
-   res.render('login1',{title:'Welcome',login_status:'Login Again!!'});
-
+//Edit form
+router.get('/edit/:id', function(req, res, next){
+   MongoClient.connectToServer(function(err){
+    if(err)
+      console.log(err);
+    var db = MongoClient.getDb();
+    var url = ObjectID(req.params.id);
+    console.log(url);
+    db.collection("users").findOne({_id:url},function(err,user){
+      console.log(user);
+      res.render('edit',{user:user,url:url});        
+    });      
+  });
 });
 
-//Logout form
-router.post('/logout', function(req, res, next){
+router.post('/editi/:id', function(req, res, next){
+   MongoClient.connectToServer(function(err){
+    if(err)
+      console.log(err);
+    var db = MongoClient.getDb();
+    var url = ObjectID(req.params.id);
     console.log(req.body);
-    con.query({
-      sql : "Select * from user_info where uEmail_id = ?",
-      values : [req.body.Email]
-    },
-    function(err,result, fields){
-      if(err) throw err;
-      else 
-      {
-          console.log(result);
-          if(result.length >0){
-            console.log(result[0].uName);
-             if(result[0].uPassword == req.body.password){
-                // res.render('home',{username:result[0].uName,});
-                 con.query({
-       sql : "Select * from books join seller_info on books.Book_id = seller_info.Book_id"
-       // values:[s.Book_id]
-  },
-
-    function(err,result1,fields)
-    {
-      // res.render('home');
-      console.log(result[0].uName);
-      console.log(result1[1]);
-      console.log(result1[2]);
-      res.render('home',{username:result[0].uName,Subject:result1[0].Name,Price:result1[0].MRP,Author:result1[0].Author,
-                      Subject1:result1[1].Name,Price1:result1[1].MRP,Author1:result1[1].Author,
-                      Subject2:result1[2].Name,Price2:result1[2].MRP,Author2:result1[2].Author,
-                      Name:result1[0].sName,Pno:result1[0].sPh_no,Address:result1[0].sAddress,Email:result1[0].sEmail,
-                    Name1:result1[1].sName,Pno1:result1[1].sPh_no,Address1:result1[1].sAddress,Email1:result1[1].sEmail,
-                    Name2:result1[2].sName,Pno2:result1[2].sPh_no,Address2:result1[2].sAddress,Email2:result1[2].sEmail
-                  });
-
-    });
-             }
-              else{
-                  console.log("WRONG PASSWORD");
-                 res.render('login1',{title:'Welcome',login_status:'Login Form'});
-                  }
-          }
-              else{
-                console.log("result empty");
-                res.render('logout',{title:'Welcome',login_status:'Login Form'});
-              }
-      }
-      });
+    // res.render('home',{url:url});
+    var newvalue = {$set:{name:req.body.name,ph_no:req.body.ph_no,Semester:req.body.Semester}};
+    // console.log()
+    db.collection("users").updateOne({_id:url},newvalue,function(err,user){
+      console.log(user);
+      res.render('home',{users:user,url:url});        
+    });       
+       
+      
+      
+  });
 });
 
 
 
+
+module.exports = router;
+  

@@ -1,0 +1,66 @@
+<html>
+<head>
+	  <meta charset="UTF-8">
+	  <title>Profile</title>
+	  
+	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css"> 
+
+	  <link rel='stylesheet prefetch' href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700,900'>
+	<link rel='stylesheet prefetch' href='https://fonts.googleapis.com/css?family=Montserrat:400,700'>
+	<link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css'>
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+	<link rel="stylesheet" type="text/css" href="stylesheets/profile.css">
+	<script type="text/javascript">
+	function edit(){
+		alert('Now you can edit your details');
+		document.getElementById("btn2").disabled=false;
+		document.getElementById("name").disabled=false;
+		document.getElementById("email").disabled=false;
+		document.getElementById("password").disabled=false;
+		document.getElementById("password").value="";
+		document.getElementById("password").type="password";
+		document.getElementById("ph_no").disabled=false;
+		document.getElementById("Semester").disabled=false;
+	}
+    function validateForm() {
+    	// alert('Changes are stored. You will be logged out now');	
+        var name = document.forms["myForm"]["name"].value;       
+        var email = document.forms["myForm"]["email"].value;       
+        var password = document.forms["myForm"]["password"].value;       
+        var sem = document.forms["myForm"]["Semester"].value;       
+        var ph_no = document.forms["myForm"]["ph_no"].value;
+        if(password == "")
+    		alert("Please enter password to continue")
+    	return false;
+        if (name == ""||email == "" || Semester == "" || ph_no == "") {
+            alert("Please fill all the fields");
+                        
+        return false;
+    }
+}
+</script>
+
+</head>
+
+<body >
+	<br> <br>
+	<div class="form">
+	<center>{{user.name}}'s Profile</center>	
+	<br>
+	<div class="thumbnail"><a href="/home"><img src="images/hat.svg"/></a></div>
+	<table>
+		<form class="login-form" action="/editi/{{url}}" method="post" name="myForm" onsubmit="return validateForm()">
+		<tr><td>Name</td><td> <input type="text" placeholder = "{{user.name}}" id="name" name="name" value="{{user.name}}" disabled="true"> </td></tr>
+		<tr><td>Password</td><td> <input type="text" placeholder = "Only new password can be put" id="password" name="password" value="" disabled="true"> </td></tr>
+		<tr><th>Email</th><td> <input type="email" placeholder = "{{user.email}}" id="email" name="email" value="{{user.email}}" disabled="true"> </td></tr>
+		<tr><th>Ph_no</th><td> <input type="text" placeholder = "{{user.ph_no}}"  id="ph_no" name="ph_no" value="{{user.ph_no}}" disabled="true"> </td></tr>
+		<tr><th>Semester</th><td> <input type="text" placeholder = "{{user.Semester}}" id="Semester" name="Semester" value="{{user.Semester}}" disabled="true"> </td></tr>
+		<tr><td><input type="button" id="btn1" onclick="edit()" value="Edit">
+		</td><td><button type="submit" id="btn2" value="Submit" disabled="true">Submit</td></tr>
+
+		</form>  
+	</table>
+	</div>
+</body>
+  
+</html>
